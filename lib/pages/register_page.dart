@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/services/auth/auth_service.dart';
+import 'package:provider/provider.dart';
 
 import '../components/buttons.dart';
 import '../components/textfields.dart';
@@ -16,8 +18,30 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
 
-  void signup (){
+  void signup () async {
+    if(passworController.text != confirmpasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not Match')
+        )
+      );
+      return;
+    } 
 
+    final authservice = Provider.of<AuthService>(context, listen: false);
+
+    try {
+      await authservice.signUpWithEmailandPassword(
+        emailController.text, 
+        passworController.text
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString())
+        )
+      );
+    }
   }
 
   final emailController = TextEditingController();
